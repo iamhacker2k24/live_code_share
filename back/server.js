@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
         })
 
     } catch (error) {
-
+    
         res.status(400).send({
             sucess: true,
             msg: error.message
