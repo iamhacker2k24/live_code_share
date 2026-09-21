@@ -25,7 +25,9 @@ app.get("/", (req, res) => {
 
 
 app.post("/uploadanything", (req, res) => {
-    console.log(req.body)
+    console.log(req.body.data)
+
+    
     res.status(200).send({
         sucess: true,
         msg: "error.message"
