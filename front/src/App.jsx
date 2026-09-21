@@ -1,11 +1,15 @@
-import React from 'react'
-import Mainpage from './Coponents/Mainpage'
-
-export const App = () => {
+import React from "react";
+import Footer from "./Componnts/Footer";
+import Header from "./Componnts/Header";
+import HeroSection from "./Componnts/heroSection";
+const App = () => {
   return (
-    <div>
+    <>
+      <Header />
+      <HeroSection />
+      <Footer />
+    </>
+  );
+};
 
-      <Mainpage/>
-    </div>
-  )
-}
+export default App;
