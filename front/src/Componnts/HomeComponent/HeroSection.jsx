@@ -1,7 +1,10 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// import { Navigate } from "react-router-dom";
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   const [shareType, setShareType] = useState("");
 
   const handleContinue = () => {
@@ -10,26 +13,21 @@ export default function HeroSection() {
     console.log("Selected:", shareType);
 
     // Later:
-    // if (shareType === "text") {
-    //   navigate("/share/text");
-    // }
-    //
-    // if (shareType === "file") {
-    //   navigate("/share/file");
-    // }
+    if (shareType === "text") {
+      navigate("/ShareText");
+    }
+
+    if (shareType === "file") {
+      navigate("/ShareFile");
+    }
   };
 
   return (
     <main className="flex min-h-[calc(100vh-144px)] items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-6">
-
       <div className="w-full max-w-xl text-center">
-
         {/* Heading */}
         <h2 className="text-5xl font-bold tracking-tight text-gray-900">
-          Share{" "}
-          <span className="text-blue-600">
-            Instantly
-          </span>
+          Share <span className="text-blue-600">Instantly</span>
         </h2>
 
         {/* Description */}
@@ -39,7 +37,6 @@ export default function HeroSection() {
 
         {/* Share Selection */}
         <div className="mt-10 text-left">
-
           <label className="mb-2 block text-sm font-medium text-gray-700">
             What do you want to share?
           </label>
@@ -53,15 +50,10 @@ export default function HeroSection() {
               Select an option
             </option>
 
-            <option value="text">
-              📝 Text
-            </option>
+            <option value="text">📝 Text</option>
 
-            <option value="file">
-              📁 File
-            </option>
+            <option value="file">📁 File</option>
           </select>
-
         </div>
 
         {/* Continue Button */}
@@ -78,9 +70,7 @@ export default function HeroSection() {
         <p className="mt-5 text-sm text-gray-400">
           Fast, simple and secure device-to-device sharing.
         </p>
-
       </div>
-
     </main>
   );
 }

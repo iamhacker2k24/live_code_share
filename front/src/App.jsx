@@ -1,13 +1,19 @@
 import React from "react";
-import Footer from "./Componnts/Footer";
-import Header from "./Componnts/Header";
-import HeroSection from "./Componnts/heroSection";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import ShareText from "./Componnts/ShareText";
+import ShareFile from "./Componnts/ShareFile";
+import HomePage from "./Componnts/HomePage";
 const App = () => {
   return (
     <>
-      <Header />
-      <HeroSection />
-      <Footer />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/ShareText" element={<ShareText />} />
+          <Route path="/ShareFile" element={<ShareFile />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 };
