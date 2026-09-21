@@ -1,19 +1,36 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 export default function HeroSection({ onBack }) {
   const [file, setFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
+  const UplaodFile = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axios.post(
+      "https://upload.gofile.io/uploadfile",
+      formData,
+    );
+    return response.data;
+  };
+
+  const uploadFileMetaTobackend = async (data) => {
+    const response = await axios.post(
+      "http://localhost:3000/uploadanything",
+      data,
+    );
+    console.log("sending to backend");
+    return response.data;
+  };
+
   const backPage = () => {
     navigate("/");
   };
-  // -----------------------------
-  // Select File
-  // -----------------------------
-  const handleFileChange = (e) => {
+
+  const handleFileChange = async (e) => {
     const selectedFile = e.target.files?.[0];
 
     if (selectedFile) {
@@ -21,25 +38,22 @@ export default function HeroSection({ onBack }) {
     }
   };
 
-  // -----------------------------
   // Drag Over
-  // -----------------------------
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  // -----------------------------
   // Drag Leave
-  // -----------------------------
+
   const handleDragLeave = (e) => {
     e.preventDefault();
     setIsDragging(false);
   };
 
-  // -----------------------------
   // Drop File
-  // -----------------------------
+
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
@@ -51,16 +65,14 @@ export default function HeroSection({ onBack }) {
     }
   };
 
-  // -----------------------------
   // Open File Picker
-  // -----------------------------
+
   const openFilePicker = () => {
     fileInputRef.current?.click();
   };
 
-  // -----------------------------
   // Remove File
-  // -----------------------------
+
   const removeFile = () => {
     setFile(null);
 
@@ -69,9 +81,8 @@ export default function HeroSection({ onBack }) {
     }
   };
 
-  // -----------------------------
   // Format File Size
-  // -----------------------------
+
   const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
 
@@ -82,13 +93,19 @@ export default function HeroSection({ onBack }) {
     return `${(bytes / Math.pow(1024, index)).toFixed(2)} ${units[index]}`;
   };
 
-  // -----------------------------
   // Send File
-  // -----------------------------
-  const handleSendFile = () => {
-    if (!file) return;
 
-    console.log("Sending file:", file);
+  const handleSendFile = async () => {
+    console.log(file);
+    if (!file) return;
+    else {
+      const data = await UplaodFile(file);
+      console.log(data);
+      const uploaddata = await uploadFileMetaTobackend(data);
+      console.log(uploaddata);
+    }
+
+    // console.log("Sending file:", file);
 
     // Your backend / WebSocket code will come here
   };
@@ -96,9 +113,7 @@ export default function HeroSection({ onBack }) {
   return (
     <main className="min-h-[calc(100vh-144px)] bg-gradient-to-br from-blue-50 via-white to-purple-50 px-6 py-8">
       <div className="mx-auto max-w-3xl">
-        {/* ========================= */}
         {/* BACK BUTTON */}
-        {/* ========================= */}
 
         <button
           type="button"
@@ -120,10 +135,6 @@ export default function HeroSection({ onBack }) {
           </svg>
           Back
         </button>
-
-        {/* ========================= */}
-        {/* MAIN CONTENT */}
-        {/* ========================= */}
 
         <div className="mx-auto mt-8 max-w-2xl">
           {/* Folder Icon */}
@@ -148,14 +159,11 @@ export default function HeroSection({ onBack }) {
             Share <span className="text-blue-600">File</span>
           </h1>
 
-          {/* Description */}
           <p className="mt-3 text-center text-base text-slate-500">
             Select a file from your device and send it to your connected device.
           </p>
 
-          {/* ========================= */}
           {/* UPLOAD AREA */}
-          {/* ========================= */}
 
           <div
             onDragOver={handleDragOver}
@@ -194,7 +202,6 @@ export default function HeroSection({ onBack }) {
 
             <p className="mt-1 text-sm text-slate-400">or click to browse</p>
 
-            {/* Choose File */}
             <button
               type="button"
               onClick={(e) => {
@@ -228,9 +235,7 @@ export default function HeroSection({ onBack }) {
             className="hidden"
           />
 
-          {/* ========================= */}
           {/* SELECTED FILE */}
-          {/* ========================= */}
 
           {file && (
             <div className="mt-5 flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
@@ -279,10 +284,6 @@ export default function HeroSection({ onBack }) {
             </div>
           )}
 
-          {/* ========================= */}
-          {/* SEND BUTTON */}
-          {/* ========================= */}
-
           <button
             type="button"
             onClick={handleSendFile}
@@ -305,10 +306,6 @@ export default function HeroSection({ onBack }) {
             </svg>
             Send File
           </button>
-
-          {/* ========================= */}
-          {/* INFO BOX */}
-          {/* ========================= */}
 
           <div className="mt-5 flex items-center gap-3 rounded-xl bg-blue-50 px-5 py-4">
             {/* Info Icon */}

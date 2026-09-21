@@ -48,7 +48,7 @@ export default function HeroSection({ onBack }) {
           Back
         </button>
 
-        {/* Main Content */}
+         
         <div className="mx-auto mt-8 max-w-2xl text-center">
 
           {/* Text Icon */}
@@ -66,7 +66,7 @@ export default function HeroSection({ onBack }) {
             </span>
           </h1>
 
-          {/* Description */}
+            
           <p className="mt-3 text-base text-slate-500">
             Type or paste your text below and send it to your connected device.
           </p>
@@ -93,7 +93,7 @@ export default function HeroSection({ onBack }) {
           {/* Buttons */}
           <div className="mt-5 flex gap-4">
 
-            {/* Send Button */}
+              
             <button
               onClick={handleSend}
               disabled={!text.trim()}

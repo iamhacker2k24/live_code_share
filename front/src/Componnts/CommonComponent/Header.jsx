@@ -6,7 +6,7 @@ const Header = () => {
     <header className="w-full border-b border-gray-200 bg-white">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
 
-        {/* Logo */}
+
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-xl font-bold text-white">
             L
@@ -17,7 +17,7 @@ const Header = () => {
           </h1>
         </div>
 
-        {/* Join Space */}
+      
         <div className="flex items-center gap-3">
           <input
             type="text"

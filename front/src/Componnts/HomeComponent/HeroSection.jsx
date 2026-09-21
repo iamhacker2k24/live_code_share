@@ -30,7 +30,7 @@ export default function HeroSection() {
           Share <span className="text-blue-600">Instantly</span>
         </h2>
 
-        {/* Description */}
+          
         <p className="mt-4 text-lg text-gray-500">
           Share text or files between your phone and PC.
         </p>
