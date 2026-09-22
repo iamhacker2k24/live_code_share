@@ -7,6 +7,20 @@ const Data = require("./model/DataSchema");
 app.use(cors())
 
 
+
+const GenarateUniqueRandomNumber = async () => {
+    let pageId;
+    let exists = true;
+    while (exists) {
+        pageId = Math.floor(Math.random() * 90000) + 10;
+        exists = await Data.findOne({ pageid: pageId })
+    }
+    console.log(pageId)
+    return pageId;
+}
+
+
+
 app.get("/", (req, res) => {
     try {
         res.status(200).send({
@@ -26,15 +40,20 @@ app.get("/", (req, res) => {
 
 
 app.post("/uploadanything", async (req, res) => {
+    let id = await GenarateUniqueRandomNumber();
 
-    const data = req.body.data
+
+    const data = req.body
+    // console.log(data)
+    // delete data.code;
+    // delete data.modTime;
+    // delete data.parentFolder;
+    // delete data.parentFolderCode;
+    data.pageid = id;
+
     console.log(data)
-    delete data.code;
-    delete data.modTime;
-    delete data.parentFolder;
-    delete data.parentFolderCode;
-    data.pageid = 3131;
-    await Data.create(data);
+
+    const result = await Data.create(data);
 
     // {
     //   code: 'uCsUtIXM',
@@ -57,7 +76,7 @@ app.post("/uploadanything", async (req, res) => {
 
     res.status(200).send({
         sucess: true,
-        msg: "error.message"
+        msg: result
     })
 })
 
