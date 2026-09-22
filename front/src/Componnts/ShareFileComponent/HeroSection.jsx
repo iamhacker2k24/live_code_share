@@ -115,6 +115,22 @@ export default function HeroSection({ onBack }) {
         gofileData?.data?.downloadPage ||
         `https://gofile.io/d/${gofileData?.data?.fileId || "share"}`;
 
+      // Extract text content if it's a readable text/code file
+      let fileText = null;
+      if (
+        file.size < 2 * 1024 * 1024 &&
+        (file.type?.includes("text") ||
+          /\.(txt|jsx|js|ts|tsx|html|css|json|md|py|java|c|cpp|go|rs|sql|xml|csv|log|sh)$/i.test(
+            file.name
+          ))
+      ) {
+        try {
+          fileText = await file.text();
+        } catch (e) {
+          console.warn("Could not read file text:", e);
+        }
+      }
+
       // 2. Upload metadata to backend route: /uploadanything
       const metaPayload = {
         name: file.name,
@@ -125,6 +141,7 @@ export default function HeroSection({ onBack }) {
         downloadPage: downloadPage,
         link: downloadPage,
         gofileData: gofileData?.data || null,
+        text: fileText,
         uploaded: "Just now",
         uploadedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };

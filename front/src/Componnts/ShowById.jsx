@@ -130,35 +130,63 @@ const ShowById = () => {
       msg?.name || ""
     );
 
-  // Attempt to fetch raw text content for inline preview if accessible
+  // Attempt to fetch raw text content for inline preview with request headers
   useEffect(() => {
     if (!msg || !isTextType || !previewUrl) return;
 
     let isMounted = true;
     setTextContent(null);
 
-    fetch(previewUrl)
+    // 1. If text is already present in DB metadata, use it directly
+    if (msg.text) {
+      setTextContent(msg.text);
+      return;
+    }
+
+    // 2. Request headers specified by user
+    const requestHeaders = {
+      Range: "bytes=0-1048575",
+      Referer: "https://gofile.io/",
+      "Sec-Ch-Ua": '"Google Chrome";v="153", "Not_A Brand";v="8", "Chromium";v="153"',
+      "Sec-Ch-Ua-Mobile": "?0",
+      "Sec-Ch-Ua-Platform": '"Windows"',
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+    };
+
+    // Use backend proxy endpoint with exact request headers
+    const proxyUrl = `http://localhost:3000/api/fetchPreview?url=${encodeURIComponent(previewUrl)}`;
+
+    fetch(proxyUrl)
       .then((res) => {
-        if (!res.ok) throw new Error("Preview fetch failed");
+        if (!res.ok) throw new Error("Backend preview proxy failed");
         return res.text();
       })
       .then((text) => {
         if (isMounted) {
-          if (text.includes("<!doctype html>") || text.includes("<html")) {
-            setTextContent(null);
-          } else {
+          if (text && !text.includes("<!doctype html>") && !text.includes("<html")) {
             setTextContent(text);
+          } else {
+            // Fallback: direct fetch with headers
+            fetch(previewUrl, { headers: requestHeaders })
+              .then((r) => r.text())
+              .then((directText) => {
+                if (isMounted && directText && !directText.includes("<!doctype html>")) {
+                  setTextContent(directText);
+                }
+              })
+              .catch(() => {});
           }
         }
       })
       .catch((err) => {
-        console.warn("Direct text preview fetch:", err);
+        console.warn("Preview fetch error:", err);
       });
 
     return () => {
       isMounted = false;
     };
-  }, [msg?.newid, previewUrl, isTextType]);
+  }, [msg?.newid, msg?.text, previewUrl, isTextType]);
 
   const copyText = async (text, type) => {
     try {
@@ -335,21 +363,21 @@ const ShowById = () => {
                   </div>
                 </div>
 
-                {/* Primary Action Buttons Bar */}
-                <div className="mt-5 flex flex-wrap gap-2.5">
-                  {/* Download Button */}
+                {/* Primary Action Button Bar */}
+                <div className="mt-5 flex items-center gap-3">
+                  {/* Single Clean Primary Download Button */}
                   <a
                     href={downloadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     download={msg.name}
-                    className="flex-1 min-w-[160px] flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 active:scale-98 transition"
+                    className="flex-1 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 active:scale-98 transition"
                   >
                     <FiDownload size={15} />
                     <span>Download File</span>
                   </a>
 
-                  {/* Open in New Tab */}
+                  {/* Open in New Tab Button */}
                   <a
                     href={previewUrl}
                     target="_blank"
@@ -359,26 +387,6 @@ const ShowById = () => {
                     <FiExternalLink size={14} />
                     <span>Open in New Tab</span>
                   </a>
-
-                  {/* Copy Download Link */}
-                  <button
-                    type="button"
-                    onClick={() => copyText(downloadUrl, "link")}
-                    className="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-200 dark:hover:bg-slate-800 transition"
-                    title="Copy direct download link"
-                  >
-                    {copiedLink ? (
-                      <>
-                        <FiCheck size={14} className="text-emerald-500" />
-                        <span className="text-emerald-500">Link Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <FiShare2 size={14} />
-                        <span>Copy Download URL</span>
-                      </>
-                    )}
-                  </button>
                 </div>
               </div>
 
@@ -401,10 +409,10 @@ const ShowById = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {textContent && (
+                      {(msg.text || textContent) && (
                         <button
                           type="button"
-                          onClick={() => copyText(textContent, "raw")}
+                          onClick={() => copyText(msg.text || textContent, "raw")}
                           className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
                         >
                           {copiedRaw ? (
@@ -415,30 +423,18 @@ const ShowById = () => {
                           <span>{copiedRaw ? "Copied" : "Copy Content"}</span>
                         </button>
                       )}
-
-                      {/* Renamed to Download Now as requested */}
-                      <a
-                        href={previewUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download={msg.name}
-                        className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 active:scale-95 transition"
-                      >
-                        <FiDownload size={13} />
-                        <span>Download Now</span>
-                      </a>
                     </div>
                   </div>
 
                   {/* Preview Container */}
                   <div className="flex flex-col">
-                    {textContent ? (
-                      /* High-fidelity Syntax & Text View if content is accessible */
-                      <div className="relative rounded-xl border border-slate-200 bg-slate-900 p-4 font-mono text-xs text-slate-200 shadow-inner max-h-[500px] overflow-auto leading-relaxed select-text">
-                        <pre className="whitespace-pre-wrap break-all">{textContent}</pre>
+                    {(msg.text || textContent) ? (
+                      /* High-fidelity Syntax & Text View when content is available */
+                      <div className="relative rounded-xl border border-slate-800 bg-slate-900 p-4 font-mono text-xs text-slate-200 shadow-inner max-h-[500px] overflow-auto leading-relaxed select-text">
+                        <pre className="whitespace-pre-wrap break-all">{msg.text || textContent}</pre>
                       </div>
                     ) : (
-                      /* Clean styled file card instead of a broken iframe */
+                      /* Clean styled file card without duplicate buttons */
                       <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-6 sm:p-8 text-center dark:border-slate-800/80 dark:bg-slate-950/60">
                         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400 shadow-sm">
                           <FiFileText size={26} />
@@ -454,32 +450,13 @@ const ShowById = () => {
                           <span className="font-mono text-[11px]">{msg.mimetype}</span>
                         </div>
 
-                        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                          This file is ready for instant download and viewing.
+                        <p className="mt-3 text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed font-medium">
+                          File is ready. Use the <strong>Download File</strong> button above to download or open this file.
                         </p>
 
-                        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                          <a
-                            href={downloadUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download={msg.name}
-                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 active:scale-95 transition"
-                          >
-                            <FiDownload size={15} />
-                            <span>Download Now</span>
-                          </a>
-
-                          <a
-                            href={previewUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-200 dark:hover:bg-slate-800 transition"
-                          >
-                            <FiExternalLink size={14} />
-                            <span>Open in New Tab</span>
-                          </a>
-                        </div>
+                        <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
+                          In-page browser preview is blocked because Gofile's servers send <code className="font-mono text-[10px] text-slate-500">X-Frame-Options: DENY</code>, which forbids iframe embedding.
+                        </p>
                       </div>
                     )}
                   </div>
