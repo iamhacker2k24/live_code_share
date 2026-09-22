@@ -1,309 +1,280 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   FiFileText,
   FiImage,
   FiVideo,
+  FiFile,
   FiCopy,
-  FiMoreHorizontal,
-  FiGrid,
   FiCheck,
+  FiExternalLink,
+  FiGrid,
+  FiX,
+  FiClock,
+  FiChevronDown,
+  FiTrash2,
+  FiFolder,
 } from "react-icons/fi";
-
-const uploads = [
-  {
-    id: 1,
-    name: "Project_Presentation.pdf",
-    size: "12.4 MB",
-    uploaded: "2 minutes ago",
-    link: "https://linklab.in/f/7a9K3m",
-    type: "pdf",
-  },
-  {
-    id: 2,
-    name: "diagram.png",
-    size: "2.1 MB",
-    uploaded: "1 hour ago",
-    link: "https://linklab.in/f/Kp2L9q",
-    type: "image",
-  },
-  {
-    id: 3,
-    name: "demo_video.mp4",
-    size: "48.6 MB",
-    uploaded: "3 hours ago",
-    link: "https://linklab.in/f/Bn4D7e",
-    type: "video",
-  },
-];
+import { useShare } from "../../App";
 
 export default function RecentUploads() {
+  const { recentUploads, clearRecentUploads } = useShare();
+  const [isOpen, setIsOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+  const [copiedItemId, setCopiedItemId] = useState(null);
+  const [qrModalItem, setQrModalItem] = useState(null);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const copyLink = async (link, id) => {
     try {
       await navigator.clipboard.writeText(link);
-
       setCopiedId(id);
-
-      setTimeout(() => {
-        setCopiedId(null);
-      }, 1500);
+      setTimeout(() => setCopiedId(null), 1500);
     } catch (error) {
       console.error("Copy failed:", error);
     }
   };
 
+  const copySpaceId = async (id) => {
+    try {
+      await navigator.clipboard.writeText(String(id));
+      setCopiedItemId(id);
+      setTimeout(() => setCopiedItemId(null), 1500);
+    } catch (error) {
+      console.error("Copy ID failed:", error);
+    }
+  };
+
   const getFileIcon = (type) => {
-    if (type === "pdf") {
-      return <FiFileText size={23} />;
-    }
-
-    if (type === "image") {
-      return <FiImage size={23} />;
-    }
-
-    if (type === "video") {
-      return <FiVideo size={23} />;
-    }
-
-    return <FiFileText size={23} />;
+    if (type === "pdf") return <FiFileText size={16} />;
+    if (type === "image") return <FiImage size={16} />;
+    if (type === "video") return <FiVideo size={16} />;
+    return <FiFile size={16} />;
   };
 
   const getIconStyle = (type) => {
-    if (type === "pdf") {
-      return "bg-red-100 text-red-500";
-    }
-
-    if (type === "image") {
-      return "bg-emerald-100 text-emerald-500";
-    }
-
-    if (type === "video") {
-      return "bg-violet-100 text-violet-600";
-    }
-
-    return "bg-blue-100 text-blue-600";
+    if (type === "pdf") return "bg-red-500/10 text-red-500 border border-red-500/20";
+    if (type === "image") return "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
+    if (type === "video") return "bg-violet-500/10 text-violet-500 border border-violet-500/20";
+    return "bg-blue-500/10 text-blue-500 border border-blue-500/20";
   };
 
   return (
-    <section className="w-full px-5 sm:px-8 lg:px-12 py-10">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-[26px] sm:text-[30px] font-bold text-[#101c3c]">
-          Recent Uploads
-        </h2>
-
-        <button
-          type="button"
-          className="
-            flex items-center gap-2
-            text-[#1769ff]
-            text-base sm:text-lg
-            font-semibold
-            hover:gap-3
-            transition-all duration-200
-          "
-        >
-          View All
-          <span className="text-2xl leading-none">→</span>
-        </button>
-      </div>
-
-      {/* Table Container */}
-      <div
-        className="
-          w-full
-          overflow-x-auto
-          rounded-2xl
-          bg-white
-          border border-[#e7eefb]
-          shadow-[0_8px_30px_rgba(30,80,160,0.06)]
-        "
+    <div className="relative inline-block text-left" ref={dropdownRef}>
+      {/* Dropdown Toggle Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm transition-all hover:border-blue-500 hover:text-blue-600 active:scale-95 dark:border-slate-800 dark:bg-slate-900/90 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:text-blue-400"
       >
-        <div className="min-w-[950px]">
+        <FiFolder size={14} className="text-blue-600 dark:text-blue-400" />
+        <span>Previous Uploads</span>
+        <span
+          className={`rounded-full px-1.5 py-0.2 text-[11px] font-bold ${
+            recentUploads.length > 0
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+          }`}
+        >
+          {recentUploads.length}
+        </span>
+        <FiChevronDown
+          size={14}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
 
-          {/* Table Header */}
-          <div
-            className="
-              grid
-              grid-cols-[2.3fr_1fr_1.4fr_2.5fr_1.5fr]
-              items-center
-              px-7
-              py-5
-              bg-[#fbfdff]
-              border-b border-[#e9eef7]
-              text-[#53698e]
-              text-sm
-              font-semibold
-            "
-          >
-            <div>File Name</div>
-            <div>Size</div>
-            <div>Uploaded</div>
-            <div>Link</div>
-            <div className="text-center">Actions</div>
+      {/* Floating Dropdown Panel */}
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-slate-200/90 bg-white/95 p-3 shadow-2xl backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/95 z-50 animate-in fade-in zoom-in-95 duration-150">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 px-1 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-900 dark:text-white">
+                Previous Uploads
+              </span>
+              <span className="rounded-full bg-blue-100 dark:bg-blue-950 px-2 py-0.5 text-[10px] font-bold text-blue-600 dark:text-blue-400">
+                {recentUploads.length}
+              </span>
+            </div>
+
+            {recentUploads.length > 0 && (
+              <button
+                type="button"
+                onClick={clearRecentUploads}
+                className="flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-red-500 transition-colors"
+                title="Clear upload history"
+              >
+                <FiTrash2 size={12} />
+                <span>Clear</span>
+              </button>
+            )}
           </div>
 
-          {/* Rows */}
-          {uploads.map((file, index) => (
-            <div
-              key={file.id}
-              className={`
-                grid
-                grid-cols-[2.3fr_1fr_1.4fr_2.5fr_1.5fr]
-                items-center
-                px-7
-                py-4
-                min-h-[88px]
-                hover:bg-[#f9fbff]
-                transition-colors duration-200
-                ${
-                  index !== uploads.length - 1
-                    ? "border-b border-[#edf1f7]"
-                    : ""
-                }
-              `}
-            >
-              {/* File Name */}
-              <div className="flex items-center gap-4 min-w-0">
-                
-                <div
-                  className={`
-                    w-[48px]
-                    h-[48px]
-                    rounded-[13px]
-                    flex
-                    items-center
-                    justify-center
-                    shrink-0
-                    ${getIconStyle(file.type)}
-                  `}
-                >
-                  {getFileIcon(file.type)}
+          {/* Uploads List or Empty State */}
+          <div className="mt-2 max-h-72 overflow-y-auto space-y-2 pr-1">
+            {recentUploads.length === 0 ? (
+              <div className="py-8 text-center">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400">
+                  <FiFolder size={20} />
                 </div>
-
-                <p
-                  className="
-                    text-[16px]
-                    font-medium
-                    text-[#17223d]
-                    truncate
-                  "
-                  title={file.name}
-                >
-                  {file.name}
+                <p className="mt-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  No previous uploads yet
+                </p>
+                <p className="mt-0.5 text-[11px] text-slate-400">
+                  Files or notes you upload will appear in this dropdown.
                 </p>
               </div>
-
-              {/* Size */}
-              <div className="text-[#52688d] text-[16px]">
-                {file.size}
-              </div>
-
-              {/* Uploaded */}
-              <div className="text-[#52688d] text-[16px]">
-                {file.uploaded}
-              </div>
-
-              {/* Link */}
-              <div className="flex items-center gap-4 min-w-0">
-                <a
-                  href={file.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="
-                    text-[#1769ff]
-                    text-[16px]
-                    font-medium
-                    truncate
-                    hover:underline
-                  "
-                  title={file.link}
+            ) : (
+              recentUploads.map((file) => (
+                <div
+                  key={file.id}
+                  className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 transition-all hover:border-slate-200 hover:bg-slate-100/70 dark:border-slate-800/80 dark:bg-slate-850/60 dark:hover:border-slate-700 dark:hover:bg-slate-800"
                 >
-                  {file.link}
-                </a>
+                  <div className="flex items-center justify-between gap-2">
+                    {/* File Icon & Details */}
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${getIconStyle(
+                          file.type
+                        )}`}
+                      >
+                        {getFileIcon(file.type)}
+                      </div>
 
-                {/* Copy Button */}
-                <button
-                  type="button"
-                  onClick={() => copyLink(file.link, file.id)}
-                  className="
-                    shrink-0
-                    w-9
-                    h-9
-                    flex
-                    items-center
-                    justify-center
-                    rounded-lg
-                    text-[#34486d]
-                    hover:bg-[#edf4ff]
-                    hover:text-[#1769ff]
-                    transition
-                  "
-                  title="Copy link"
-                >
-                  {copiedId === file.id ? (
-                    <FiCheck size={19} className="text-green-500" />
-                  ) : (
-                    <FiCopy size={19} />
-                  )}
-                </button>
-              </div>
+                      <div className="truncate min-w-0">
+                        <p
+                          className="truncate text-xs font-semibold text-slate-800 dark:text-slate-200"
+                          title={file.name}
+                        >
+                          {file.name}
+                        </p>
+                        <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500">
+                          <span>{file.size}</span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1">
+                            <FiClock size={10} /> {file.uploaded}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
-              {/* Actions */}
-              <div className="flex items-center justify-center gap-4">
+                    {/* ID Pill with Copy */}
+                    <button
+                      type="button"
+                      onClick={() => copySpaceId(file.id)}
+                      className="shrink-0 flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50/80 px-2 py-1 text-[11px] font-mono font-bold text-blue-700 hover:bg-blue-100 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300 transition-colors"
+                      title="Copy Space ID"
+                    >
+                      <span>ID: {file.id}</span>
+                      {copiedItemId === file.id ? (
+                        <FiCheck size={11} className="text-emerald-500" />
+                      ) : (
+                        <FiCopy size={11} />
+                      )}
+                    </button>
+                  </div>
 
-                {/* QR Button */}
-                <button
-                  type="button"
-                  className="
-                    h-[44px]
-                    px-5
-                    rounded-xl
-                    bg-[#edf5ff]
-                    text-[#1769ff]
-                    flex
-                    items-center
-                    gap-2.5
-                    font-semibold
-                    text-[15px]
-                    hover:bg-[#e2efff]
-                    transition
-                  "
-                >
-                  <FiGrid size={19} />
-                  <span>QR</span>
-                </button>
+                  {/* Action buttons row */}
+                  <div className="mt-2 flex items-center justify-between border-t border-slate-200/50 dark:border-slate-800/60 pt-2 text-[11px]">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => copyLink(file.link, file.id)}
+                        className="flex items-center gap-1 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition"
+                      >
+                        {copiedId === file.id ? (
+                          <>
+                            <FiCheck size={11} className="text-emerald-500" />
+                            <span className="text-emerald-500 font-semibold">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <FiCopy size={11} />
+                            <span>Copy Link</span>
+                          </>
+                        )}
+                      </button>
 
-                {/* More Button */}
-                <button
-                  type="button"
-                  className="
-                    w-[44px]
-                    h-[44px]
-                    rounded-xl
-                    border
-                    border-[#dce6f5]
-                    bg-white
-                    flex
-                    items-center
-                    justify-center
-                    text-[#24385e]
-                    hover:bg-[#f4f8ff]
-                    hover:border-[#bcd3f8]
-                    transition
-                  "
-                  title="More options"
-                >
-                  <FiMoreHorizontal size={21} />
-                </button>
+                      <span className="text-slate-300 dark:text-slate-700">•</span>
 
-              </div>
-            </div>
-          ))}
+                      <button
+                        type="button"
+                        onClick={() => setQrModalItem(file)}
+                        className="flex items-center gap-1 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition"
+                      >
+                        <FiGrid size={11} />
+                        <span>QR Code</span>
+                      </button>
+                    </div>
+
+                    <a
+                      href={file.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 font-semibold text-blue-600 hover:underline dark:text-blue-400"
+                    >
+                      <span>Open</span>
+                      <FiExternalLink size={11} />
+                    </a>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      )}
+
+      {/* QR Code Modal */}
+      {qrModalItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-xs rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                {qrModalItem.name}
+              </h4>
+              <button
+                onClick={() => setQrModalItem(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <FiX size={16} />
+              </button>
+            </div>
+
+            <div className="my-3 flex justify-center p-3 bg-white rounded-xl border border-slate-200 dark:border-slate-800">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
+                  qrModalItem.link
+                )}`}
+                alt="QR Code"
+                className="h-36 w-36 rounded-lg"
+              />
+            </div>
+
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Scan with your phone to access this item directly.
+            </p>
+
+            <button
+              onClick={() => copyLink(qrModalItem.link, qrModalItem.id)}
+              className="mt-3 w-full rounded-xl bg-blue-600 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition"
+            >
+              Copy Download Link
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
