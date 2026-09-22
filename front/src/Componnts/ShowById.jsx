@@ -8,14 +8,12 @@ import {
   FiCheck,
   FiDownload,
   FiFileText,
-  FiExternalLink,
   FiRefreshCw,
   FiAlertCircle,
   FiHardDrive,
   FiCalendar,
   FiEye,
   FiCode,
-  FiShare2,
 } from "react-icons/fi";
 import Header from "./CommonComponent/Header";
 import Footer from "./CommonComponent/Footer";
@@ -280,7 +278,7 @@ const ShowById = () => {
                 <button
                   type="button"
                   onClick={() => fetchData(fileId)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-200"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 transition"
                 >
                   <FiRefreshCw size={13} />
                   <span>Retry</span>
@@ -332,13 +330,13 @@ const ShowById = () => {
                         </button>
 
                         {/* File Size */}
-                        <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300">
+                        <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                           <FiHardDrive size={11} className="text-slate-400" />
                           <span>{formatFileSize(msg.size)}</span>
                         </span>
 
                         {/* MimeType Badge */}
-                        <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-mono font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300">
+                        <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-mono font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                           <FiCode size={11} className="text-blue-500" />
                           <span>{msg.mimetype || "text/plain"}</span>
                         </span>
@@ -364,28 +362,17 @@ const ShowById = () => {
                 </div>
 
                 {/* Primary Action Button Bar */}
-                <div className="mt-5 flex items-center gap-3">
+                <div className="mt-5">
                   {/* Single Clean Primary Download Button */}
                   <a
                     href={downloadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     download={msg.name}
-                    className="flex-1 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 active:scale-98 transition"
+                    className="w-full flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 active:scale-98 transition"
                   >
                     <FiDownload size={15} />
                     <span>Download File</span>
-                  </a>
-
-                  {/* Open in New Tab Button */}
-                  <a
-                    href={previewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-200 dark:hover:bg-slate-800 transition"
-                  >
-                    <FiExternalLink size={14} />
-                    <span>Open in New Tab</span>
                   </a>
                 </div>
               </div>
@@ -413,7 +400,7 @@ const ShowById = () => {
                         <button
                           type="button"
                           onClick={() => copyText(msg.text || textContent, "raw")}
-                          className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
+                          className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 transition"
                         >
                           {copiedRaw ? (
                             <FiCheck size={12} className="text-emerald-500" />

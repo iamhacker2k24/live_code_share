@@ -208,7 +208,7 @@ export default function HeroSection({ onBack }) {
           </div>
         ) : (
           /* Textarea editor */
-          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 dark:border-slate-800 dark:bg-slate-850/50 focus-within:border-blue-500 focus-within:bg-white dark:focus-within:bg-slate-900 transition-colors">
+          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 dark:border-slate-700 dark:bg-slate-800/50 focus-within:border-blue-500 focus-within:bg-white dark:focus-within:bg-slate-900 transition-colors">
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -251,7 +251,7 @@ export default function HeroSection({ onBack }) {
               type="button"
               onClick={handleClear}
               disabled={!text}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-750 dark:hover:text-slate-200 transition disabled:opacity-40"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white transition disabled:opacity-40"
               title="Clear text"
             >
               <FiRotateCcw size={14} />
@@ -259,7 +259,7 @@ export default function HeroSection({ onBack }) {
           </div>
         )}
 
-        <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-850 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-800">
+        <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-800/70 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700">
           <FiInfo size={13} className="shrink-0 text-blue-500" />
           <span>Shared text is assigned a unique Space ID for instant access.</span>
         </div>

@@ -273,7 +273,7 @@ export default function HeroSection({ onBack }) {
                 href={uploadSuccess.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-200 dark:hover:bg-slate-800 transition"
+                className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 transition"
               >
                 <FiExternalLink size={13} />
                 <span>Open File</span>
@@ -300,7 +300,7 @@ export default function HeroSection({ onBack }) {
             className={`mt-3 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all ${
               isDragging
                 ? "border-blue-600 bg-blue-50/80 dark:border-blue-500 dark:bg-blue-950/40"
-                : "border-slate-300 bg-slate-50/50 hover:border-blue-500 hover:bg-blue-50/30 dark:border-slate-700 dark:bg-slate-850/50 dark:hover:border-blue-500 dark:hover:bg-blue-950/20"
+                : "border-slate-300 bg-slate-50/50 hover:border-blue-500 hover:bg-blue-50/30 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-blue-500 dark:hover:bg-blue-950/20"
             }`}
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
@@ -326,7 +326,7 @@ export default function HeroSection({ onBack }) {
 
         {/* Selected File Card */}
         {file && !uploadSuccess && (
-          <div className="mt-3 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 dark:border-slate-800 dark:bg-slate-850/80">
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 dark:border-slate-700 dark:bg-slate-800/80">
             <div className="flex min-w-0 items-center gap-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
                 <FiFile size={16} />
@@ -374,7 +374,7 @@ export default function HeroSection({ onBack }) {
           </button>
         )}
 
-        <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-850 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-800">
+        <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-800/70 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700">
           <FiInfo size={13} className="shrink-0 text-blue-500" />
           <span>Upload will return a unique Space ID for instant retrieval.</span>
         </div>

@@ -87,7 +87,7 @@ export default function RecentUploads() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm transition-all hover:border-blue-500 hover:text-blue-600 active:scale-95 dark:border-slate-800 dark:bg-slate-900/90 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:text-blue-400"
+        className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm transition-all hover:border-blue-500 hover:text-blue-600 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-blue-400 dark:hover:bg-slate-700"
       >
         <FiFolder size={14} className="text-blue-600 dark:text-blue-400" />
         <span>Previous Uploads</span>
@@ -151,7 +151,7 @@ export default function RecentUploads() {
               recentUploads.map((file) => (
                 <div
                   key={file.id}
-                  className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 transition-all hover:border-slate-200 hover:bg-slate-100/70 dark:border-slate-800/80 dark:bg-slate-850/60 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                  className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 transition-all hover:border-slate-200 hover:bg-slate-100/70 dark:border-slate-700/80 dark:bg-slate-800/60 dark:hover:border-slate-600 dark:hover:bg-slate-800"
                 >
                   <div className="flex items-center justify-between gap-2">
                     {/* File Icon & Details */}

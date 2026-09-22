@@ -81,7 +81,7 @@ const Header = () => {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-400">
+                <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
                   <span className="h-2 w-2 rounded-full bg-amber-400" />
                   <span className="hidden sm:inline">Active Space:</span>
                   <span>ID generates upon upload</span>
@@ -122,7 +122,7 @@ const Header = () => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100 active:scale-95 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-750"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
               title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
               aria-label="Toggle theme"
             >

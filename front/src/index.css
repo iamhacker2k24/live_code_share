@@ -37,3 +37,15 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 116, 139, 0.8);
 }
+
+/* Guard against unreadable white buttons in dark mode */
+.dark button.bg-white:not([class*="dark:bg-"]),
+.dark a.bg-white:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+.dark button.bg-white:not([class*="dark:bg-"]):hover,
+.dark a.bg-white:not([class*="dark:bg-"]):hover {
+  background-color: #334155;
+}
