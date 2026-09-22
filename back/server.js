@@ -41,46 +41,57 @@ app.get("/", (req, res) => {
 
 app.post("/uploadanything", async (req, res) => {
     let id = await GenarateUniqueRandomNumber();
-
-
-    const data = req.body
-    // console.log(data)
+    const data = req.body.data
+    console.log(data)
     // delete data.code;
     // delete data.modTime;
     // delete data.parentFolder;
     // delete data.parentFolderCode;
-    data.pageid = id;
-
+    // data.pageid = id;
     console.log(data)
-
     const result = await Data.create(data);
-
-    // {
-    //   code: 'uCsUtIXM',
-    //   createTime: 1790026871,
-    //   downloadPage: 'https://gofile.io/d/4zgzIp97',
-    //   guestToken: 'oDsKYtl6ZLreLxPzMQVpXnSHbXKtC6uq',
-    //   id: '643cd497-e30b-4185-bf39-a833076adc67',
-    //   md5: 'efd9baa99041555d5a1612772371fff6',
-    //   mimetype: 'text/plain; charset=utf-8',
-    //   modTime: 1790026871,
-    //   name: 'ReturnRefundPolicy.jsx',
-    //   parentFolder: 'c00eed48-ea5f-43a8-a375-fdfae369bc21',
-    //   parentFolderCode: '4zgzIp97',
-    //   servers: [ 'store9' ],
-    //   size: 5501,
-    //   type: 'file'
-    // }
-
-    // https://store9.gofile.io/download/web/643cd497-e30b-4185-bf39-a833076adc67/ReturnRefundPolicy.jsx
 
     res.status(200).send({
         sucess: true,
-        msg: result
+        id: id
     })
 })
 
 
+
+
+
+
+
+
+app.post("/findDataOfupload", async (req, res) => {
+    const fileid = req.body.fileid;
+    console.log(fileid);
+    try {
+       
+        const dataExits = await Data.findOne({ pageid: fileid })
+        if (dataExits) {
+            res.status(200).send({
+                sucess: true,
+                msg: dataExits
+            })
+        }
+        else {
+            res.status(200).send({
+                sucess: true,
+                msg: "oye file id recheck kar "
+            })
+        }
+
+
+    }
+    catch (err) {
+        res.status(200).send({
+            sucess: true,
+            msg: err.message
+        })
+    }
+})
 const dbConnect = async () => {
     try {
 
