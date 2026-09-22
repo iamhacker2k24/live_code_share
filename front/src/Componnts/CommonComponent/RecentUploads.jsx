@@ -36,6 +36,17 @@ export default function RecentUploads() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const getItemLink = (item) => {
+    const origin =
+      typeof window !== "undefined" && window.location.origin
+        ? window.location.origin
+        : "http://localhost:5173";
+    if (item?.id) {
+      return `${origin}/${item.id}`;
+    }
+    return item?.link || `${origin}/`;
+  };
+
   const copyLink = async (link, id) => {
     try {
       await navigator.clipboard.writeText(link);
@@ -191,8 +202,9 @@ export default function RecentUploads() {
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
-                        onClick={() => copyLink(file.link, file.id)}
+                        onClick={() => copyLink(getItemLink(file), file.id)}
                         className="flex items-center gap-1 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition"
+                        title={`Copy: ${getItemLink(file)}`}
                       >
                         {copiedId === file.id ? (
                           <>
@@ -220,10 +232,11 @@ export default function RecentUploads() {
                     </div>
 
                     <a
-                      href={file.link}
+                      href={getItemLink(file)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 font-semibold text-blue-600 hover:underline dark:text-blue-400"
+                      title={getItemLink(file)}
                     >
                       <span>Open</span>
                       <FiExternalLink size={11} />
@@ -255,11 +268,16 @@ export default function RecentUploads() {
             <div className="my-3 flex justify-center p-3 bg-white rounded-xl border border-slate-200 dark:border-slate-800">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
-                  qrModalItem.link
+                  getItemLink(qrModalItem)
                 )}`}
                 alt="QR Code"
                 className="h-36 w-36 rounded-lg"
               />
+            </div>
+
+            {/* Display the link clearly */}
+            <div className="mb-2 rounded-lg bg-slate-100 p-2 text-[11px] font-mono text-blue-600 dark:bg-slate-800 dark:text-blue-400 break-all select-all text-center">
+              {getItemLink(qrModalItem)}
             </div>
 
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -267,10 +285,10 @@ export default function RecentUploads() {
             </p>
 
             <button
-              onClick={() => copyLink(qrModalItem.link, qrModalItem.id)}
+              onClick={() => copyLink(getItemLink(qrModalItem), qrModalItem.id)}
               className="mt-3 w-full rounded-xl bg-blue-600 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition"
             >
-              Copy Download Link
+              {copiedId === qrModalItem.id ? "Link Copied!" : "Copy Link"}
             </button>
           </div>
         </div>

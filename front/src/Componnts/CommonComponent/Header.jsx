@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiSun, FiMoon, FiCopy, FiCheck, FiSearch, FiDownload, FiX, FiFileText } from "react-icons/fi";
 import axios from "axios";
 import { useShare } from "../../App";
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const {
     theme,
     toggleTheme,
@@ -39,28 +40,8 @@ const Header = () => {
     const queryId = inputId.trim();
     if (!queryId) return;
 
-    setIsLoading(true);
-    setErrorMessage("");
-
-    try {
-      const response = await axios.post("http://localhost:3000/findDataOfupload", {
-        fileid: Number(queryId) || queryId,
-      });
-
-      if (response.data?.sucess && response.data?.msg && typeof response.data.msg === "object") {
-        setRetrievedItem(response.data.msg);
-        setIsRetrieveModalOpen(true);
-        setInputId("");
-      } else {
-        const msg = typeof response.data?.msg === "string" ? response.data.msg : "File ID not found";
-        setErrorMessage(msg);
-      }
-    } catch (err) {
-      console.error("Error finding data:", err);
-      setErrorMessage("Could not connect to server or ID not found.");
-    } finally {
-      setIsLoading(false);
-    }
+    setInputId("");
+    navigate(`/${queryId}`);
   };
 
   return (
@@ -154,78 +135,6 @@ const Header = () => {
           </div>
         </div>
       </header>
-
-      {/* Retrieved Item Modal */}
-      {isRetrieveModalOpen && retrievedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="flex h-7 px-2 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/60 dark:text-blue-400 font-bold text-xs">
-                  {retrievedItem.pageid || "ID"}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  Space Content Found
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsRetrieveModalOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-              >
-                <FiX size={18} />
-              </button>
-            </div>
-
-            <div className="mt-5 space-y-4">
-              {retrievedItem.text ? (
-                <div>
-                  <label className="text-xs font-semibold uppercase text-slate-400 tracking-wider">
-                    Shared Text Message
-                  </label>
-                  <div className="mt-1.5 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-800 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-200 whitespace-pre-wrap">
-                    {retrievedItem.text}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => navigator.clipboard.writeText(retrievedItem.text)}
-                    className="mt-3 flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition"
-                  >
-                    <FiCopy size={13} /> Copy Text
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center gap-3.5 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-850">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400">
-                      <FiFileText size={22} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
-                        {retrievedItem.fileName || retrievedItem.name || "Uploaded File"}
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {retrievedItem.fileSize || retrievedItem.size || "Unknown size"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {(retrievedItem.downloadPage || retrievedItem.link || retrievedItem.gofileData?.downloadPage) && (
-                    <a
-                      href={retrievedItem.downloadPage || retrievedItem.link || retrievedItem.gofileData?.downloadPage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 flex items-center justify-center gap-2 w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 transition"
-                    >
-                      <FiDownload size={16} /> Open & Download File
-                    </a>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

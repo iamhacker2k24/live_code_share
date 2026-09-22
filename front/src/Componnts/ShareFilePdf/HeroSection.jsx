@@ -80,6 +80,11 @@ export default function HeroSection({ onBack }) {
 
       if (response.data?.sucess) {
         const genId = response.data.id;
+        const origin =
+          typeof window !== "undefined" && window.location.origin
+            ? window.location.origin
+            : "http://localhost:5173";
+        const shareLink = `${origin}/${genId}`;
 
         // Update active Space ID in header
         setActiveSpaceId(genId);
@@ -88,7 +93,8 @@ export default function HeroSection({ onBack }) {
           id: genId,
           text: text,
           title: textTitle,
-          link: downloadPage,
+          link: shareLink,
+          downloadPage: downloadPage,
           size: formatFileSize(textFile.size),
         });
 
@@ -98,7 +104,8 @@ export default function HeroSection({ onBack }) {
           name: textTitle,
           size: formatFileSize(textFile.size),
           uploaded: "Just now",
-          link: downloadPage,
+          link: shareLink,
+          downloadPage: downloadPage,
           type: "file",
         });
       }

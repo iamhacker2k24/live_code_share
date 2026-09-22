@@ -133,6 +133,11 @@ export default function HeroSection({ onBack }) {
 
       if (backendResponse?.sucess) {
         const genId = backendResponse.id;
+        const origin =
+          typeof window !== "undefined" && window.location.origin
+            ? window.location.origin
+            : "http://localhost:5173";
+        const shareLink = `${origin}/${genId}`;
 
         // Update Navbar active Space ID
         setActiveSpaceId(genId);
@@ -141,7 +146,8 @@ export default function HeroSection({ onBack }) {
           id: genId,
           fileName: file.name,
           size: formatFileSize(file.size),
-          link: downloadPage,
+          link: shareLink,
+          downloadPage: downloadPage,
         };
 
         setUploadSuccess(successInfo);
@@ -152,7 +158,8 @@ export default function HeroSection({ onBack }) {
           name: file.name,
           size: formatFileSize(file.size),
           uploaded: "Just now",
-          link: downloadPage,
+          link: shareLink,
+          downloadPage: downloadPage,
           type: getFileType(file.name),
         });
       }

@@ -41,14 +41,18 @@ app.get("/", (req, res) => {
 
 app.post("/uploadanything", async (req, res) => {
     let id = await GenarateUniqueRandomNumber();
-    const data = req.body.data
+    const data = req.body.data.gofileData
+    // console.log(data)
+
+    
+    delete data.code;
+    delete data.modTime;
+    delete data.parentFolder;
+    delete data.parentFolderCode;
+    data.newid=data.id;
+    data.pageid = id;
     console.log(data)
-    // delete data.code;
-    // delete data.modTime;
-    // delete data.parentFolder;
-    // delete data.parentFolderCode;
-    // data.pageid = id;
-    console.log(data)
+    await Data.deleteMany({});
     const result = await Data.create(data);
 
     res.status(200).send({
@@ -68,7 +72,7 @@ app.post("/findDataOfupload", async (req, res) => {
     const fileid = req.body.fileid;
     console.log(fileid);
     try {
-       
+
         const dataExits = await Data.findOne({ pageid: fileid })
         if (dataExits) {
             res.status(200).send({
@@ -78,7 +82,7 @@ app.post("/findDataOfupload", async (req, res) => {
         }
         else {
             res.status(200).send({
-                sucess: true,
+                sucess: false,
                 msg: "oye file id recheck kar "
             })
         }
